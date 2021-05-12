@@ -124,6 +124,8 @@ SUBROUTINE wrf_ioinit( Status )
 #endif
 #ifdef PIO
   CALL ext_pio_ioinit  ( SysDepInfo, ierr(12) )
+#ifdef NETCDFPAR
+  CALL ext_ncdpar_ioinit( SysDepInfo, ierr(13) )  
 #endif
   minerr = MINVAL(ierr)
   maxerr = MAXVAL(ierr)
@@ -186,7 +188,10 @@ SUBROUTINE wrf_ioexit( Status )
 #ifdef PIO
   CALL ext_pio_ioexit  ( ierr(12) )
 #endif
- 
+#ifdef NETCDFPAR
+  CALL ext_ncdpar_ioexit  ( ierr(13) )
+#endif
+
   IF ( use_output_servers() ) THEN
       CALL wrf_quilt_ioexit( ierr(11) )
   ENDIF
@@ -233,6 +238,7 @@ SUBROUTINE wrf_open_for_write_begin( FileName , grid, SysDepInfo, &
   CHARACTER*512     :: LocFilename   ! for appending the process ID if necessary
   INTEGER           :: myproc
   CHARACTER*512     :: mess
+  CHARACTER (LEN=256) :: message
   CHARACTER*1028    :: tstr, t1
   INTEGER           :: i,j
   INTEGER           :: Comm_compute , Comm_io
@@ -454,6 +460,10 @@ SUBROUTINE wrf_open_for_write_commit( DataHandle , Status )
           ENDIF
           IF ( .NOT. multi_files(io_form) ) CALL wrf_dm_bcast_bytes( Status, IWORDSIZE )
 #endif
+#ifdef NETCDFPAR
+        CASE ( IO_NETCDFPAR   )
+            CALL ext_ncdpar_open_for_write_commit ( Hndl , Status )
+#endif
 #ifdef ESMFIO
         CASE ( IO_ESMF )
           CALL ext_esmf_open_for_write_commit ( Hndl , Status )
@@ -581,6 +591,11 @@ SUBROUTINE wrf_open_for_read_begin( FileName , grid, SysDepInfo, &
           CALL wrf_dm_bcast_bytes( Hndl, IWORDSIZE )
         ENDIF
 #endif
+#ifdef NETCDFPAR
+      CASE ( IO_NETCDFPAR   )
+        CALL ext_ncdpar_open_for_read_begin ( FileName , Comm_compute, Comm_io, SysDepInfo, &
+                                            Hndl , Status )
+#endif
 #ifdef PNETCDF
       CASE ( IO_PNETCDF   )
         CALL ext_pnc_open_for_read_begin ( FileName , Comm_compute, Comm_io, SysDepInfo, &
@@ -704,6 +719,10 @@ SUBROUTINE wrf_open_for_read_commit( DataHandle , Status )
         CASE ( IO_ESMF )
           CALL ext_esmf_open_for_read_commit ( Hndl , Status )
 #endif
+#ifdef NETCDFPAR
+        CASE ( IO_NETCDFPAR )
+          CALL ext_ncdpar_open_for_read_commit ( Hndl , Status )
+#endif
 #ifdef PNETCDF
         CASE ( IO_PNETCDF )
           CALL ext_pnc_open_for_read_commit ( Hndl , Status )
@@ -801,6 +820,11 @@ SUBROUTINE wrf_open_for_read ( FileName , grid, SysDepInfo, &
         CALL wrf_dm_bcast_bytes( Status, IWORDSIZE )
         CALL wrf_dm_bcast_bytes( Hndl, IWORDSIZE )
       ENDIF
+#endif
+#ifdef NETCDFPAR
+    CASE ( IO_NETCDFPAR  )
+      CALL ext_ncdpar_open_for_read ( FileName , Comm_compute, Comm_io, SysDepInfo, &
+                               Hndl , Status )
 #endif
 #ifdef PNETCDF
     CASE ( IO_PNETCDF  )
@@ -940,6 +964,10 @@ SUBROUTINE wrf_inquire_opened ( DataHandle, FileName , FileStatus, Status )
           CALL wrf_dm_bcast_bytes( FileStatus, IWORDSIZE )
           CALL wrf_dm_bcast_bytes( Status    , IWORDSIZE )
 #endif
+#ifdef NETCDFPAR
+        CASE ( IO_NETCDFPAR   )
+           CALL ext_ncdpar_inquire_opened ( Hndl, FileName , FileStatus, Status )
+#endif
 #ifdef PHDF5
       CASE ( IO_PHDF5   )
           CALL ext_phdf5_inquire_opened ( Hndl, FileName , FileStatus, Status )
@@ -1043,6 +1071,10 @@ SUBROUTINE wrf_inquire_filename ( DataHandle, FileName , FileStatus, Status )
 #ifdef PHDF5
         CASE ( IO_PHDF5   )
           CALL ext_phdf5_inquire_filename ( Hndl, FileName , FileStatus, Status )
+#endif
+#ifdef NETCDFPAR
+        CASE ( IO_NETCDFPAR   )
+          CALL ext_ncdpar_inquire_filename ( Hndl, FileName , FileStatus, Status )
 #endif
 #ifdef PNETCDF
         CASE ( IO_PNETCDF   )
@@ -1203,6 +1235,10 @@ SUBROUTINE wrf_ioclose ( DataHandle, Status )
           IF ( multi_files(io_form) .OR.  wrf_dm_on_monitor() ) CALL ext_ncd_ioclose( Hndl, Status )
           CALL wrf_dm_bcast_bytes( Status, IWORDSIZE )
 #endif
+#ifdef NETCDFPAR
+        CASE ( IO_NETCDFPAR  )
+          CALL ext_ncdpar_ioclose( Hndl, Status )
+#endif
 #ifdef PHDF5
         CASE ( IO_PHDF5  )
           CALL ext_phdf5_ioclose( Hndl, Status )
@@ -1330,6 +1366,10 @@ SUBROUTINE wrf_get_next_time ( DataHandle, DateStr, Status )
         CASE ( IO_PHDF5   )
           CALL ext_phdf5_get_next_time( Hndl, DateStr, Status )
 #endif
+#ifdef NETCDFPAR
+        CASE ( IO_NETCDFPAR   )
+          CALL ext_ncdpar_get_next_time( Hndl, DateStr, Status )
+#endif
 #ifdef XXX
         CASE ( IO_XXX   )
           CALL ext_xxx_get_next_time( Hndl, DateStr, Status )
@@ -1437,6 +1477,10 @@ SUBROUTINE wrf_get_previous_time ( DataHandle, DateStr, Status )
         CASE ( IO_PHDF5   )
           CALL ext_phdf5_get_previous_time( Hndl, DateStr, Status )
 #endif
+#ifdef NETCDFPAR
+        CASE ( IO_NETCDFPAR   )
+          CALL ext_ncdpar_get_previous_time( Hndl, DateStr, Status )
+#endif
 #ifdef XXX
         CASE ( IO_XXX   )
           CALL ext_xxx_get_previous_time( Hndl, DateStr, Status )
@@ -1524,6 +1568,10 @@ SUBROUTINE wrf_set_time ( DataHandle, DateStr, Status )
 #ifdef PHDF5
         CASE ( IO_PHDF5  )
           CALL ext_phdf5_set_time( Hndl, DateStr, Status )
+#endif
+#ifdef NETCDFPAR
+        CASE ( IO_NETCDFPAR  )
+          CALL ext_ncdpar_set_time( Hndl, DateStr, Status )
 #endif
 #ifdef PNETCDF
         CASE ( IO_PNETCDF  )
@@ -1699,6 +1747,13 @@ SUBROUTINE wrf_get_var_info ( DataHandle , VarName , NDim , MemoryOrder , Stagge
                                       DomainStart , DomainEnd ,                &
                                       Status )
 #endif
+#ifdef NETCDFPAR
+        CASE ( IO_NETCDFPAR)
+          CALL ext_ncdpar_get_var_info ( Hndl , VarName , NDim ,            &
+                                      MemoryOrder , Stagger ,                  &
+                                      DomainStart , DomainEnd ,                &
+                                      Status )
+#endif
 #ifdef PNETCDF
         CASE ( IO_PNETCDF)
           CALL ext_pnc_get_var_info ( Hndl , VarName , NDim ,            &
@@ -1807,6 +1862,10 @@ SUBROUTINE add_new_handle( Hndl, Hopened, for_out, DataHandle )
 #ifdef PHDF5
       CASE ( IO_PHDF5  )
         CALL wrf_error_fatal( 'add_new_handle:  multiple output files not supported for PHDF5' )
+#endif
+#ifdef NETCDFPAR
+      CASE ( IO_NETCDFPAR  )
+        CALL wrf_error_fatal( 'add_new_handle:  multiple output files not supported for NETCDFPAR' )
 #endif
 #ifdef PNETCDF
       CASE ( IO_PNETCDF  )
@@ -2096,6 +2155,9 @@ SUBROUTINE wrf_read_field1 ( DataHandle , DateStr , VarName , Field , FieldType 
 #ifdef NETCDF
   EXTERNAL     ext_ncd_read_field
 #endif
+#ifdef NETCDFPAR
+  EXTERNAL     ext_ncdpar_read_field
+#endif
 #ifdef PNETCDF
   EXTERNAL     ext_pnc_read_field
 #endif
@@ -2153,6 +2215,16 @@ SUBROUTINE wrf_read_field1 ( DataHandle , DateStr , VarName , Field , FieldType 
 #ifdef PHDF5
         CASE ( IO_PHDF5)
           CALL ext_phdf5_read_field   (                   &
+                                     Hndl , DateStr , VarName , Field , FieldType , Comm , IOComm , &
+                                     DomainDesc , MemoryOrder , Stagger , DimNames ,              &
+                                     DomainStart , DomainEnd ,                                    &
+                                     MemoryStart , MemoryEnd ,                                    &
+                                     PatchStart , PatchEnd ,                                      &
+                                     Status )
+#endif
+#ifdef NETCDFPAR
+        CASE ( IO_NETCDFPAR )
+          CALL ext_ncdpar_read_field   (                   &
                                      Hndl , DateStr , VarName , Field , FieldType , Comm , IOComm , &
                                      DomainDesc , MemoryOrder , Stagger , DimNames ,              &
                                      DomainStart , DomainEnd ,                                    &
@@ -2355,6 +2427,9 @@ SUBROUTINE wrf_write_field1 ( DataHandle , DateStr , VarName , Field , FieldType
 #ifdef NETCDF
   EXTERNAL     ext_ncd_write_field
 #endif
+#ifdef NETCDFPAR
+  EXTERNAL     ext_ncdpar_write_field
+#endif
 #ifdef PNETCDF
   EXTERNAL     ext_pnc_write_field
 #endif
@@ -2417,6 +2492,16 @@ SUBROUTINE wrf_write_field1 ( DataHandle , DateStr , VarName , Field , FieldType
 #ifdef PHDF5
         CASE ( IO_PHDF5 )
           CALL ext_phdf5_write_field(                  &
+                                     Hndl , DateStr , VarName , Field , FieldType , Comm , IOComm , &
+                                     DomainDesc , MemoryOrder , Stagger , DimNames ,              &
+                                     DomainStart , DomainEnd ,                                    &
+                                     MemoryStart , MemoryEnd ,                                    &
+                                     PatchStart , PatchEnd ,                                      &
+                                     Status )
+#endif
+#ifdef NETCDFPAR
+        CASE ( IO_NETCDFPAR )
+          CALL ext_ncdpar_write_field(                  &
                                      Hndl , DateStr , VarName , Field , FieldType , Comm , IOComm , &
                                      DomainDesc , MemoryOrder , Stagger , DimNames ,              &
                                      DomainStart , DomainEnd ,                                    &
