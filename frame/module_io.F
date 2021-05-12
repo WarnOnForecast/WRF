@@ -124,6 +124,7 @@ SUBROUTINE wrf_ioinit( Status )
 #endif
 #ifdef PIO
   CALL ext_pio_ioinit  ( SysDepInfo, ierr(12) )
+#endif
 #ifdef NETCDFPAR
   CALL ext_ncdpar_ioinit( SysDepInfo, ierr(13) )  
 #endif
