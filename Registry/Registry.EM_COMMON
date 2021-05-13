@@ -2159,14 +2159,14 @@ state    real    QG_MAX_CI        ij     misc        1         -      irh       
 
 state    real    UH               ij     misc        1         -      r          "UH"             "UPDRAFT HELICITY"        "m2 s-2"
 
-state    real    UH16             ij     misc        1         -      irh        "UH16"           "UPDRAFT HELICITY16"      "m2 s-2
+state    real    UH16             ij     misc        1         -      irh        "UH16"           "UPDRAFT HELICITY16"      "m2 s-2"
 state    real    UH02             ij     misc        1         -      irh        "UH02"           "UPDRAFT HELICITY02"      "m2 s-2"
 state    real    UH03             ij     misc        1         -      irh        "UH03"           "UPDRAFT HELICITY03"      "m2 s-2"
 
 state    real    W_COLMEAN        ij     misc        1         -     -           "W_COLMEAN"      "COLUMN MEAN Z-WIND"      "m s-1"
 state    real    NUMCOLPTS        ij     misc        1         -     -           "NUMCOLPTS"      "NUMBER OF COLUMN PTS"    "dimensionless"
 state    real    GRPL_COLINT      ij     misc        1         -     -           "GRPL_COLINT"    "COL INT GRAUPEL"         "kg m-2"
-state    integer NTIMESTEPS       -      misc        1         -     -           "NTIMESTEPS"     "NUMBER OF TIME STEPS SINCE RESET" "dimensionless
+state    integer NTIMESTEPS       -      misc        1         -     -           "NTIMESTEPS"     "NUMBER OF TIME STEPS SINCE RESET" "dimensionless"
 state    real    HAIL_MAXK1       ij     misc        1         -     irh02       "HAIL_MAXK1"     "MAX HAIL DIAMETER K=1"   "m"
 state    real    HAIL_MAX2D       ij     misc        1         -     irh02       "HAIL_MAX2D"     "MAX HAIL DIAMETER ENTIRE COLUMN"   "m"
 state    real    GLM_FED_AVG      ij     misc        1         -     irh        "GLM_FED_AVG"       "GLM FED Proxy, average"      "flashes column-1 min-1"
@@ -2694,7 +2694,7 @@ rconfig   real   seaice_thickness_default namelist,physics      1              3
 rconfig   logical tice2tsk_if2cold        namelist,physics      1              .false. -     "tice2tsk_if2cold" "Avoid low ice temps when ice frac and Tsk are inconsistent"
 rconfig   real    bucket_mm               namelist,physics      1             -1.      ih     "bucket_mm" "bucket reset value for water accumulations -1: inactive"   ""
 rconfig   real    bucket_J                namelist,physics      1             -1.      ih     "bucket_J"  "bucket reset value for energy accumulations -1: inactive"   ""
-rconfig   integer mp_tend_radar           namelist,physics      1              0       -     "mp_tend_radar"   "replace microphysics tendency with radar-based specification  0=no, 1=yes
+rconfig   integer mp_tend_radar           namelist,physics      1              0       -     "mp_tend_radar"   "replace microphysics tendency with radar-based specification  0=no, 1=yes"
 rconfig   real    mp_tend_lim             namelist,physics      1             10.      -     "mp_tend_lim" "limit on temp tendency from mp latent heating"   "K/s"
 rconfig   real    prec_acc_dt             namelist,physics      max_domains    0.      ih     "prec_acc_dt" "bucket reset time interval between outputs for cumulus or grid scale precipitation"   "minutes"
 rconfig   real    prec_acc_dt1            namelist,physics      max_domains    0.      ih     "prec_acc_dt1" "bucket reset time interval between outputs for cumulus or grid scale precipitation"   "minutes"
