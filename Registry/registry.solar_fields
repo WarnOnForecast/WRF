@@ -11,8 +11,8 @@ state   real    qi_tot        ikj    dyn_em       1         -     -      "QI_TOT
 #  2-D arrays that will be filled with diagnosed quantities
 state   real    cldfrac2d     ij     dyn_em       1         -     h      "CLDFRAC2D"    "2-D MAX CLOUD FRACTION"                                     "%"
 state   real    wvp           ij     dyn_em       1         -     h      "WVP"          "WATER VAPOR PATH"                                           "kg m-2"
-state   real    lwp           ij     dyn_em       1         -     h      "LWP"          "LIQUID CLOUD WATER PATH"                                    "kg m-2"
-state   real    iwp           ij     dyn_em       1         -     h      "IWP"          "ICE CLOUD WATER PATH"                                       "kg m-2"
+state   real    lwp           ij     dyn_em       1         -     irh      "LWP"          "LIQUID CLOUD WATER PATH"                                    "kg m-2"
+state   real    iwp           ij     dyn_em       1         -     irh      "IWP"          "ICE CLOUD WATER PATH"                                       "kg m-2"
 state   real    swp           ij     dyn_em       1         -     h      "SWP"          "SNOW CLOUD WATER PATH"                                      "kg m-2"
 state   real    wp_sum        ij     dyn_em       1         -     h      "WP_SUM"       "SUM OF LWP+IWP+SWP"                                         "kg m-2"
 state   real    lwp_tot       ij     dyn_em       1         -     h      "LWP_TOT"      "LIQUID CLOUD WATER PATH RES + UNRES"                        "kg m-2"

@@ -1618,8 +1618,9 @@ state    real  refl_10cm_1km        ij  misc        1         -     ihdu     "re
 state    real  refl_10cm_4km        ij  misc        1         -     ihdu     "refl_10cm_4km"         "Reflectivity at 4 km AGL"                    "dBZ"
 
 state    real  vt_dbz_wt            ikj misc        1         -      -       "vt_dbz_wt"             "Reflectivity-weighted precip fall speed"     "m s-1"
-state    real  LWP              ij      misc        1         -     irh      "LWP"                   "TIME-STEP Liquid water path"          "g/m2"
-state    real  IWP              ij      misc        1         -     irh      "IWP"                   "TIME-STEP ice water path"             "g/m2"
+#already registered in registry.solar_fields
+#state    real  LWP              ij      misc        1         -     irh      "LWP"                   "TIME-STEP Liquid water path"          "g/m2"
+#state    real  IWP              ij      misc        1         -     irh      "IWP"                   "TIME-STEP ice water path"             "g/m2"
 
 state    real    th_old          ikj      misc        1         -      rusd        "TH_OLD"              "Old Value of Th"   "K"
 state    real    qv_old          ikj      misc        1         -      rusd        "QV_OLD"              "Old Value of qv"   "kg kg-1"
