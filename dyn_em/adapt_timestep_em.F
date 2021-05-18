@@ -325,6 +325,10 @@ RECURSIVE SUBROUTINE adapt_timestep(grid, config_flags)
      history_interval_sec = grid%history_interval_s + grid%history_interval_m*60 + &
                             grid%history_interval_h*3600 + grid%history_interval_d*86400
 
+     ! WOFS - if we've set the auxhist7_interval field, then it should override history_interval,
+     ! as it is the output frequency of our wrfwofs 
+     IF ( grid%auxhist7_interval .GT. 0 ) history_interval_sec = grid%auxhist7_interval * 60                            
+
      time_to_output = history_interval_sec - &
           mod( curr_secs, REAL(history_interval_sec) )
      num = INT(time_to_output * precision + 0.5)
