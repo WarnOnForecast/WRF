@@ -283,6 +283,24 @@ SUBROUTINE wrf_open_for_write_begin( FileName , grid, SysDepInfo, &
           CALL wrf_dm_bcast_bytes( Status, IWORDSIZE )
         ENDIF
 #endif
+#ifdef NETCDFPAR
+      CASE ( IO_NETCDFPAR   )
+          IF ( ncd_nofill ) THEN
+               CALL wrf_debug ( 100 , 'calling ext_ncdpar_open_for_write_begin 1' )
+
+            CALL ext_ncdpar_open_for_write_begin ( FileName , Comm_compute, Comm_io, SysDepInfo // ",NOFILL=.TRUE.", &
+                                                Hndl , Status )
+              WRITE ( message , '("after ext_ncdpar_open_for_write_begin 1: status = ",i8)') status
+
+               CALL wrf_debug ( 100 , message ) 
+          ELSE
+               CALL wrf_debug ( 100 , 'calling ext_ncdpar_open_for_write_begin 2' )
+            CALL ext_ncdpar_open_for_write_begin ( LocFileName , Comm_compute, Comm_io, SysDepInfo, &
+                                                Hndl , Status )
+               CALL wrf_debug ( 100 , 'after ext_ncdpar_open_for_write_begin 1' )
+          ENDIF
+
+#endif
 #ifdef PHDF5
       CASE (IO_PHDF5  )
         CALL ext_phdf5_open_for_write_begin( FileName, Comm_compute, Comm_io, SysDepInfo, &
